@@ -1,0 +1,13 @@
+version: '1'
+name: yofinebook
+description: ''
+repository:
+  path: .
+  git: true
+panes:
+  - id: pane-1
+    name: 构建博客网站
+    agent: codex
+    restore: restart
+    isolation: shared
+    yolo: false

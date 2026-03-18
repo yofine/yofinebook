@@ -1,0 +1,10 @@
+updated_at: '2026-03-18T16:37:10.978Z'
+panes:
+  - id: pane-1
+    name: 构建博客网站
+    agent: codex
+    pid: 2163786
+    status: idle
+    isolation: shared
+    workdir: /root/workspace/yofinebook
+    started_at: '2026-03-18T16:11:04.667Z'

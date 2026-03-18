@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { groupArticlesBySection } from "../lib/articles";
+
+const groups = groupArticlesBySection();
+---
+
+<BaseLayout title="归档 | Yofinebook" description="按原创与翻译归档浏览文章。">
+  <section class="archive-shell">
+    <div class="section-header">
+      <h1>归档</h1>
+      <p>按内容类型浏览，适合整理专题、系列翻译与长期写作。</p>
+    </div>
+
+    <section class="archive-group">
+      <h2>翻译</h2>
+      <div class="archive-list">
+        {groups.translations.map((article) => (
+          <a href={article.url} class="archive-item">
+            <span>{article.title}</span>
+            <time>{article.date || "待补日期"}</time>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="archive-group">
+      <h2>原创</h2>
+      <div class="archive-list">
+        {groups.posts.length > 0 ? groups.posts.map((article) => (
+          <a href={article.url} class="archive-item">
+            <span>{article.title}</span>
+            <time>{article.date || "待补日期"}</time>
+          </a>
+        )) : (
+          <p class="empty-state">当前还没有原创文章，可直接在 `content/` 下新增 Markdown。</p>
+        )}
+      </div>
+    </section>
+  </section>
+</BaseLayout>

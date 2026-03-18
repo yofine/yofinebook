@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getFeaturedArticles, getSectionLabel } from "../lib/articles";
+
+const featured = getFeaturedArticles(6);
+---
+
+<BaseLayout title="Yofinebook" description="中文技术写作与翻译，强调良好排版和安静阅读。">
+  <section class="hero">
+    <p class="eyebrow">静态博客 / 中文长文 / 技术翻译</p>
+    <h1>为长文阅读而设计，而不是为信息流而设计。</h1>
+    <p class="hero-copy">
+      这里收录原创写作与技术翻译。页面重点放在中文段落节奏、目录导航、跨设备阅读连续性，以及尽量克制的视觉呈现。
+    </p>
+  </section>
+
+  <section class="section-header">
+    <h2>最近更新</h2>
+    <a href="/archive">查看全部</a>
+  </section>
+
+  <section class="card-list">
+    {featured.map((article) => (
+      <a class="article-card" href={article.url}>
+        <p class="eyebrow">{getSectionLabel(article.section)}</p>
+        <h3>{article.title}</h3>
+        <p>{article.summary}</p>
+        <div class="card-meta">
+          <span>{article.date || "待补充日期"}</span>
+          <span>{article.readingMinutes} 分钟</span>
+        </div>
+      </a>
+    ))}
+  </section>
+</BaseLayout>

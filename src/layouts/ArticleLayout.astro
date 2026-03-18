@@ -1,0 +1,44 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { getSectionLabel, type Article } from "../lib/articles";
+
+interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+const sectionLabel = getSectionLabel(article.section);
+---
+
+<BaseLayout title={`${article.title} | Yofinebook`} description={article.summary}>
+  <article class="article-shell">
+    <div class="article-grid">
+      <aside class="article-meta">
+        <p class="eyebrow">{sectionLabel}</p>
+        <h1>{article.title}</h1>
+        <div class="meta-block">
+          {article.date && <p>日期：{article.date}</p>}
+          <p>阅读：约 {article.readingMinutes} 分钟</p>
+          {article.source && (
+            <p>
+              原文：<a href={article.source} target="_blank" rel="noreferrer">链接</a>
+            </p>
+          )}
+        </div>
+      </aside>
+      <div class="article-content">
+        <div class="prose" set:html={article.html} />
+      </div>
+      <aside class="article-toc">
+        <p class="toc-title">目录</p>
+        <ul>
+          {article.headings.map((heading) => (
+            <li class={`depth-${heading.depth}`}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>
