@@ -23,8 +23,16 @@ const {
   </head>
   <body>
     <div class="page-shell">
+      <div class="page-aura page-aura-left" aria-hidden="true"></div>
+      <div class="page-aura page-aura-right" aria-hidden="true"></div>
       <header class="site-header">
-        <a class="brand" href="/">{site.title}</a>
+        <a class="brand" href="/">
+          <span class="brand-mark">YF</span>
+          <span class="brand-copy">
+            <strong>{site.title}</strong>
+            <small>{site.description}</small>
+          </span>
+        </a>
         <nav class="site-nav" aria-label="主导航">
           {site.navigation.map((item) => (
             <a href={item.href}>{item.label}</a>
@@ -35,7 +43,8 @@ const {
         <slot />
       </main>
       <footer class="site-footer">
-        <p>{site.description}</p>
+        <p>精读、翻译、长期写作。</p>
+        <p>{site.author} / {site.title}</p>
       </footer>
     </div>
   </body>

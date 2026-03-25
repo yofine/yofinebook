@@ -3,33 +3,72 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getFeaturedArticles, getSectionLabel } from "../lib/articles";
 
 const featured = getFeaturedArticles(6);
+const [leadArticle, ...restArticles] = featured;
 ---
 
 <BaseLayout title="Yofinebook" description="中文技术写作与翻译，强调良好排版和安静阅读。">
-  <section class="hero">
-    <p class="eyebrow">静态博客 / 中文长文 / 技术翻译</p>
-    <h1>为长文阅读而设计，而不是为信息流而设计。</h1>
-    <p class="hero-copy">
-      这里收录原创写作与技术翻译。页面重点放在中文段落节奏、目录导航、跨设备阅读连续性，以及尽量克制的视觉呈现。
-    </p>
+  <section class="home-hero">
+    <div class="hero-intro">
+      <p class="eyebrow">Independent Reading Journal</p>
+      <h1>把技术博客做成一页一页值得坐下来读的东西。</h1>
+      <p class="hero-copy">
+        这里不是信息流，也不是内容卡片堆叠。它更接近一本持续更新的阅读刊物，重视段落节奏、留白、标题层次和长时间停留时的舒适感。
+      </p>
+    </div>
+    <div class="hero-note">
+      <p class="note-label">阅读取向</p>
+      <p>偏长文，偏安静，偏适合晚上慢慢看。</p>
+      <a href="/archive">进入归档</a>
+    </div>
   </section>
 
-  <section class="section-header">
-    <h2>最近更新</h2>
-    <a href="/archive">查看全部</a>
-  </section>
-
-  <section class="card-list">
-    {featured.map((article) => (
-      <a class="article-card" href={article.url}>
-        <p class="eyebrow">{getSectionLabel(article.section)}</p>
-        <h3>{article.title}</h3>
-        <p>{article.summary}</p>
-        <div class="card-meta">
-          <span>{article.date || "待补充日期"}</span>
-          <span>{article.readingMinutes} 分钟</span>
+  {leadArticle && (
+    <section class="feature-stage">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Latest Piece</p>
+          <h2>最新主推</h2>
         </div>
-      </a>
-    ))}
+        <a href="/archive">查看全部</a>
+      </div>
+
+      <div class="feature-grid">
+        <a class="feature-lead" href={leadArticle.url}>
+          <p class="eyebrow">{getSectionLabel(leadArticle.section)}</p>
+          <h3>{leadArticle.title}</h3>
+          <p>{leadArticle.summary}</p>
+          <div class="meta-row">
+            <span>{leadArticle.date || "待补日期"}</span>
+            <span>{leadArticle.readingMinutes} 分钟阅读</span>
+          </div>
+        </a>
+
+        <div class="feature-list">
+          {restArticles.map((article) => (
+            <a class="feature-item" href={article.url}>
+              <div>
+                <p class="eyebrow">{getSectionLabel(article.section)}</p>
+                <h3>{article.title}</h3>
+              </div>
+              <div class="meta-row">
+                <span>{article.date || "待补日期"}</span>
+                <span>{article.readingMinutes} 分钟</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="editorial-strip">
+    <article>
+      <p class="eyebrow">Writing</p>
+      <h2>不是追热点，而是做能反复回看的内容。</h2>
+    </article>
+    <article>
+      <p class="eyebrow">Translation</p>
+      <h2>翻译会尽量保留原文的结构和论证力度，而不是只摘结论。</h2>
+    </article>
   </section>
 </BaseLayout>

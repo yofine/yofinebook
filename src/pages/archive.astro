@@ -7,30 +7,49 @@ const groups = groupArticlesBySection();
 
 <BaseLayout title="归档 | Yofinebook" description="按原创与翻译归档浏览文章。">
   <section class="archive-shell">
-    <div class="section-header">
-      <h1>归档</h1>
-      <p>按内容类型浏览，适合整理专题、系列翻译与长期写作。</p>
+    <div class="archive-intro">
+      <p class="eyebrow">Archive</p>
+      <h1>按写作脉络归档，而不是按流量排序。</h1>
+      <p>把原创与翻译分开陈列，方便按主题回看，也让整个站点更像一本可翻阅的文集。</p>
     </div>
 
     <section class="archive-group">
-      <h2>翻译</h2>
+      <div class="section-heading">
+        <h2>翻译</h2>
+        <p>{groups.translations.length} 篇</p>
+      </div>
       <div class="archive-list">
         {groups.translations.map((article) => (
           <a href={article.url} class="archive-item">
-            <span>{article.title}</span>
-            <time>{article.date || "待补日期"}</time>
+            <div>
+              <strong>{article.title}</strong>
+              <p>{article.summary}</p>
+            </div>
+            <div class="meta-row">
+              <time>{article.date || "待补日期"}</time>
+              <span>{article.readingMinutes} 分钟</span>
+            </div>
           </a>
         ))}
       </div>
     </section>
 
     <section class="archive-group">
-      <h2>原创</h2>
+      <div class="section-heading">
+        <h2>原创</h2>
+        <p>{groups.posts.length} 篇</p>
+      </div>
       <div class="archive-list">
         {groups.posts.length > 0 ? groups.posts.map((article) => (
           <a href={article.url} class="archive-item">
-            <span>{article.title}</span>
-            <time>{article.date || "待补日期"}</time>
+            <div>
+              <strong>{article.title}</strong>
+              <p>{article.summary}</p>
+            </div>
+            <div class="meta-row">
+              <time>{article.date || "待补日期"}</time>
+              <span>{article.readingMinutes} 分钟</span>
+            </div>
           </a>
         )) : (
           <p class="empty-state">当前还没有原创文章，可直接在 `content/` 下新增 Markdown。</p>

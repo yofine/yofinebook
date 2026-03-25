@@ -12,20 +12,24 @@ const sectionLabel = getSectionLabel(article.section);
 
 <BaseLayout title={`${article.title} | Yofinebook`} description={article.summary}>
   <article class="article-shell">
-    <div class="article-grid">
-      <aside class="article-meta">
+    <div class="article-hero">
+      <div class="article-hero-copy">
         <p class="eyebrow">{sectionLabel}</p>
         <h1>{article.title}</h1>
-        <div class="meta-block">
-          {article.date && <p>日期：{article.date}</p>}
-          <p>阅读：约 {article.readingMinutes} 分钟</p>
-          {article.source && (
-            <p>
-              原文：<a href={article.source} target="_blank" rel="noreferrer">链接</a>
-            </p>
-          )}
-        </div>
+        <p class="article-summary">{article.summary}</p>
+      </div>
+      <aside class="article-meta-card">
+        <p>{article.date || "待补日期"}</p>
+        <p>约 {article.readingMinutes} 分钟阅读</p>
+        {article.source && (
+          <p>
+            原文：<a href={article.source} target="_blank" rel="noreferrer">链接</a>
+          </p>
+        )}
       </aside>
+    </div>
+
+    <div class="article-grid">
       <div class="article-content">
         <div class="prose" set:html={article.html} />
       </div>
