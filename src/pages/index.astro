@@ -1,9 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getFeaturedArticles, getSectionLabel } from "../lib/articles";
+import { formatDate, getArticleCounts, getFeaturedArticles, getSectionLabel } from "../lib/articles";
 
 const featured = getFeaturedArticles(6);
 const [leadArticle, ...restArticles] = featured;
+const counts = getArticleCounts();
 ---
 
 <BaseLayout title="Yofinebook" description="中文技术写作与翻译，强调良好排版和安静阅读。">
@@ -22,6 +23,21 @@ const [leadArticle, ...restArticles] = featured;
     </div>
   </section>
 
+  <section class="reading-metrics" aria-label="站点统计">
+    <article>
+      <span>{counts.total}</span>
+      <p>当前文章总数</p>
+    </article>
+    <article>
+      <span>{counts.translations}</span>
+      <p>翻译文章</p>
+    </article>
+    <article>
+      <span>{counts.posts}</span>
+      <p>原创文章</p>
+    </article>
+  </section>
+
   {leadArticle && (
     <section class="feature-stage">
       <div class="section-heading">
@@ -38,7 +54,7 @@ const [leadArticle, ...restArticles] = featured;
           <h3>{leadArticle.title}</h3>
           <p>{leadArticle.summary}</p>
           <div class="meta-row">
-            <span>{leadArticle.date || "待补日期"}</span>
+            <span>{formatDate(leadArticle.date)}</span>
             <span>{leadArticle.readingMinutes} 分钟阅读</span>
           </div>
         </a>
@@ -51,7 +67,7 @@ const [leadArticle, ...restArticles] = featured;
                 <h3>{article.title}</h3>
               </div>
               <div class="meta-row">
-                <span>{article.date || "待补日期"}</span>
+                <span>{formatDate(article.date)}</span>
                 <span>{article.readingMinutes} 分钟</span>
               </div>
             </a>
@@ -70,5 +86,15 @@ const [leadArticle, ...restArticles] = featured;
       <p class="eyebrow">Translation</p>
       <h2>翻译会尽量保留原文的结构和论证力度，而不是只摘结论。</h2>
     </article>
+  </section>
+
+  <section class="reading-promise">
+    <div>
+      <p class="eyebrow">Reading Experience</p>
+      <h2>页面应该退到后面，让内容自己站到前面。</h2>
+    </div>
+    <p>
+      因此这里刻意减少干扰式组件，强化标题层级、页内节奏和连续阅读路径。你点进一篇文章之后，应该感觉像是打开了一页被认真整理过的文本，而不是进入另一个内容容器。
+    </p>
   </section>
 </BaseLayout>

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
-import { getSectionLabel, type Article } from "../lib/articles";
+import { formatDate, getAdjacentArticles, getSectionLabel, type Article } from "../lib/articles";
 
 interface Props {
   article: Article;
@@ -8,10 +8,14 @@ interface Props {
 
 const { article } = Astro.props;
 const sectionLabel = getSectionLabel(article.section);
+const adjacent = getAdjacentArticles(article);
 ---
 
 <BaseLayout title={`${article.title} | Yofinebook`} description={article.summary}>
   <article class="article-shell">
+    <div class="reading-progress" aria-hidden="true">
+      <span data-page-progress></span>
+    </div>
     <div class="article-hero">
       <div class="article-hero-copy">
         <p class="eyebrow">{sectionLabel}</p>
@@ -19,7 +23,7 @@ const sectionLabel = getSectionLabel(article.section);
         <p class="article-summary">{article.summary}</p>
       </div>
       <aside class="article-meta-card">
-        <p>{article.date || "待补日期"}</p>
+        <p>{formatDate(article.date)}</p>
         <p>约 {article.readingMinutes} 分钟阅读</p>
         {article.source && (
           <p>
@@ -32,17 +36,79 @@ const sectionLabel = getSectionLabel(article.section);
     <div class="article-grid">
       <div class="article-content">
         <div class="prose" set:html={article.html} />
+
+        {(adjacent.newer || adjacent.older) && (
+          <nav class="article-pagination" aria-label="文章翻页">
+            {adjacent.newer ? (
+              <a href={adjacent.newer.url} class="page-turn">
+                <span>较新一篇</span>
+                <strong>{adjacent.newer.title}</strong>
+              </a>
+            ) : <div></div>}
+            {adjacent.older && (
+              <a href={adjacent.older.url} class="page-turn page-turn-next">
+                <span>较早一篇</span>
+                <strong>{adjacent.older.title}</strong>
+              </a>
+            )}
+          </nav>
+        )}
       </div>
       <aside class="article-toc">
         <p class="toc-title">目录</p>
         <ul>
           {article.headings.map((heading) => (
             <li class={`depth-${heading.depth}`}>
-              <a href={`#${heading.slug}`}>{heading.text}</a>
+              <a href={`#${heading.slug}`} data-toc-link>{heading.text}</a>
             </li>
           ))}
         </ul>
       </aside>
     </div>
   </article>
+
+  <script is:inline>
+    const progressEl = document.querySelector("[data-page-progress]");
+    const headingEls = Array.from(document.querySelectorAll(".prose h2, .prose h3"));
+    const tocLinks = Array.from(document.querySelectorAll("[data-toc-link]"));
+
+    const syncProgress = () => {
+      if (!progressEl) return;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = scrollable > 0 ? window.scrollY / scrollable : 0;
+      progressEl.style.transform = `scaleX(${Math.min(Math.max(ratio, 0), 1)})`;
+    };
+
+    const activateLink = (id) => {
+      for (const link of tocLinks) {
+        const active = link.getAttribute("href") === `#${id}`;
+        link.classList.toggle("is-active", active);
+      }
+    };
+
+    if (headingEls.length > 0 && tocLinks.length > 0) {
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+
+        if (visible?.target?.id) {
+          activateLink(visible.target.id);
+        }
+      }, {
+        rootMargin: "-20% 0px -65% 0px",
+        threshold: 0.1
+      });
+
+      for (const heading of headingEls) {
+        observer.observe(heading);
+      }
+
+      activateLink(headingEls[0].id);
+    }
+
+    syncProgress();
+    window.addEventListener("scroll", syncProgress, { passive: true });
+    window.addEventListener("resize", syncProgress);
+  </script>
 </BaseLayout>

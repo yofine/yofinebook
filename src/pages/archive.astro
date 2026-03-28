@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { groupArticlesBySection } from "../lib/articles";
+import { formatDate, groupArticlesBySection } from "../lib/articles";
 
 const groups = groupArticlesBySection();
 ---
@@ -26,7 +26,7 @@ const groups = groupArticlesBySection();
               <p>{article.summary}</p>
             </div>
             <div class="meta-row">
-              <time>{article.date || "待补日期"}</time>
+              <time>{formatDate(article.date)}</time>
               <span>{article.readingMinutes} 分钟</span>
             </div>
           </a>
@@ -47,7 +47,7 @@ const groups = groupArticlesBySection();
               <p>{article.summary}</p>
             </div>
             <div class="meta-row">
-              <time>{article.date || "待补日期"}</time>
+              <time>{formatDate(article.date)}</time>
               <span>{article.readingMinutes} 分钟</span>
             </div>
           </a>

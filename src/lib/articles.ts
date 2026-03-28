@@ -11,6 +11,15 @@ renderer.heading = ({ tokens, depth }) => {
   const innerHtml = marked.parser(tokens);
   return `<h${depth} id="${slug}">${innerHtml}</h${depth}>`;
 };
+renderer.code = ({ text, lang }) => {
+  const language = (lang || "text").trim().toLowerCase();
+  return [
+    `<div class="code-block" data-language="${escapeHtml(language)}">`,
+    `<div class="code-block-bar"><span>${escapeHtml(language)}</span></div>`,
+    `<pre><code class="language-${escapeHtml(language)}">${escapeHtml(text)}</code></pre>`,
+    "</div>"
+  ].join("");
+};
 
 const marked = new Marked({
   gfm: true,
@@ -83,6 +92,15 @@ function slugify(value: string): string {
     .toLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function stripMarkdown(value: string): string {
@@ -218,12 +236,46 @@ export function getFeaturedArticles(limit = 3): Article[] {
   return getAllArticles().slice(0, limit);
 }
 
+export function getArticleCounts() {
+  const articles = getAllArticles();
+
+  return {
+    total: articles.length,
+    translations: articles.filter((article) => article.section === "translations").length,
+    posts: articles.filter((article) => article.section === "posts").length
+  };
+}
+
+export function formatDate(value?: string): string {
+  if (!value) {
+    return "待补日期";
+  }
+
+  const match = value.match(/^(\d{4})-(\d{2})(?:-(\d{2}))?$/);
+  if (!match) {
+    return value;
+  }
+
+  const [, year, month, day] = match;
+  return day ? `${year} 年 ${Number(month)} 月 ${Number(day)} 日` : `${year} 年 ${Number(month)} 月`;
+}
+
 export function getArticle(section: string, slug: string): Article | undefined {
   return getAllArticles().find((article) => article.section === section && article.slug === slug);
 }
 
 export function getSectionLabel(section: ArticleSection): string {
   return sectionConfig[section].label;
+}
+
+export function getAdjacentArticles(target: Article) {
+  const articles = getAllArticles();
+  const index = articles.findIndex((article) => article.url === target.url);
+
+  return {
+    newer: index > 0 ? articles[index - 1] : undefined,
+    older: index >= 0 && index < articles.length - 1 ? articles[index + 1] : undefined
+  };
 }
 
 export function groupArticlesBySection() {
